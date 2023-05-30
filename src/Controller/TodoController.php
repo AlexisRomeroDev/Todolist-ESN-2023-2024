@@ -14,10 +14,15 @@ use Symfony\Component\Routing\Annotation\Route;
 class TodoController extends AbstractController
 {
     #[Route('/', name: 'app_todo_index', methods: ['GET'])]
-    public function index(TodoRepository $todoRepository): Response
+    public function index(TodoRepository $todoRepository, Request $request): Response
     {
+
+        $orderby = $request->query->get('orderby') ?? 'id';
+        $order = $request->query->get('order') ?? 'ASC';
+
         return $this->render('todo/index.html.twig', [
-            'todos' => $todoRepository->findBy([], ['name' => 'ASC']),
+            'todos' => $todoRepository->findBy([], [$orderby => $order]),
+            'order' => $order == 'ASC'?'DESC':'ASC'
         ]);
     }
 
