@@ -3,43 +3,61 @@
 {% block title %}Todo index{% endblock %}
 
 {% block body %}
-    <h1>Todo index</h1>
+    <div class="container todo_index">
+        <h1>Liste des taches</h1>
 
-    {{ dump() }}
+        {{ form_start(filterForm, {'attr': {'class': 'todo_is_done_filter'}} ) }}
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th><a href="{{ path('app_todo_index')}}?orderby=id&order={{ order }}">Id</a></th>
-                <th><a href="{{ path('app_todo_index')}}?orderby=name&order={{ order }}">Name</a></th>
-                <th>Catégorie</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for todo in todos %}
-            <tr>
-                <td>{{ todo.id }}</td>
-                <td>{{ todo.name }}</td>
-                <td>
+           <div class="form-group"> {{ form_row(filterForm.searchTerms) }}</div>
 
-                    {% if todo.category is not null %}
-                        {{ todo.category.name }}
-                    {% endif %}
+        <div class="form-group">
+            {{ form_widget(filterForm.stillTodo ) }}
+            {{ form_label(filterForm .stillTodo ) }}
+            {{ form_errors(filterForm .stillTodo ) }}
+            {{ form_help(filterForm .stillTodo ) }}
+        </div>
 
-                </td>
-                <td>
-                    <a href="{{ path('app_todo_show', {'id': todo.id}) }}">show</a>
-                    <a href="{{ path('app_todo_edit', {'id': todo.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button class="btn btn-outline-primary text-left">{{ button_label|default('Filtrer') }}</button>
+        </div>
+        {{ form_end(filterForm ) }}
 
-    <a href="{{ path('app_todo_new') }}">Create new</a>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><a href="{{ path('app_todo_index')}}?orderby=id&order={{ order }}">Id</a></th>
+                    <th><a href="{{ path('app_todo_index')}}?orderby=name&order={{ order }}">Name</a></th>
+                    <th>Fait</th>
+                    <th>Catégorie</th>
+                    <th>actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for todo in todos %}
+                <tr>
+                    <td>{{ todo.id }}</td>
+                    <td>{{ todo.name }}</td>
+                    <td>{{ todo.isDone ? 'Yes' : 'No' }}</td>
+                    <td>
+
+                        {% if todo.category is not null %}
+                            {{ todo.category.name }}
+                        {% endif %}
+
+                    </td>
+                    <td>
+                        <a href="{{ path('app_todo_show', {'id': todo.id}) }}">show</a>
+                        <a href="{{ path('app_todo_edit', {'id': todo.id}) }}">edit</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ path('app_todo_new') }}">Create new</a>
+    </div>
 {% endblock %}

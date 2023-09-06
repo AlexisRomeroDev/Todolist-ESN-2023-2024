@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Todo;
+use App\Form\TodoIsDoneFilterType;
 use App\Form\TodoType;
 use App\Repository\TodoRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,22 +14,42 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/todo')]
 class TodoController extends AbstractController
 {
-    #[Route('/', name: 'app_todo_index', methods: ['GET'])]
+    #[Route('/', name: 'app_todo_index', methods: ['GET', 'POST'])]
     public function index(TodoRepository $todoRepository, Request $request): Response
     {
 
         $orderby = $request->query->get('orderby') ?? 'id';
         $order = $request->query->get('order') ?? 'ASC';
 
-        return $this->render('todo/index.html.twig', [
-            'todos' => $todoRepository->findFullTodo($orderby, $order),
-            'order' => $order == 'ASC'?'DESC':'ASC'
-        ]);
+        $filterForm = $this->createForm(TodoIsDoneFilterType::class);
+        $filterForm->handleRequest($request);
 
-/*        return $this->render('todo/index.html.twig', [
-            'todos' => $todoRepository->findBy([], [$orderby => $order]),
-            'order' => $order == 'ASC'?'DESC':'ASC'
-        ]);*/
+        if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+
+            $criteria = [];
+
+            $stillTodo = $filterForm->get('stillTodo')->getData();
+            if ($stillTodo === true) {
+                $criteria = [
+                    'done' => false,
+                ];
+            }
+
+            $searchTerms = $filterForm->get('searchTerms')->getData();
+
+            $todos = $todoRepository->search($searchTerms, $criteria);
+
+        }else{
+
+            $todos =  $todoRepository->findFullTodo($orderby, $order);
+
+        }
+
+        return $this->render('todo/index.html.twig', [
+            'todos' => $todos,
+            'order' => $order == 'ASC'?'DESC':'ASC',
+            'filterForm' => $filterForm
+        ]);
     }
 
     #[Route('/new', name: 'app_todo_new', methods: ['GET', 'POST'])]

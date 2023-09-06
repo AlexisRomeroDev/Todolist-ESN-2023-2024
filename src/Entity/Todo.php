@@ -23,6 +23,9 @@ class Todo
     #[ORM\ManyToOne(inversedBy: 'todos')]
     private ?Category $category = null;
 
+    #[ORM\Column]
+    private ?bool $done = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,6 +63,18 @@ class Todo
     public function setCategory(?Category $category): self
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function isDone(): ?bool
+    {
+        return $this->done;
+    }
+
+    public function setDone(bool $done): self
+    {
+        $this->done = $done;
 
         return $this;
     }
