@@ -42,13 +42,13 @@ class TodoRepository extends ServiceEntityRepository
     /**
      * @return Todo[] Returns an array of Todo objects
      */
-    public function findFullTodo(): array
+    public function findFullTodo($orderby, $order): array
     {
         return $this->createQueryBuilder('t')
             ->leftJoin('t.category', 'category')
+            ->orderBy('t.'.$orderby, $order)
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
     }
 
 //    /**
