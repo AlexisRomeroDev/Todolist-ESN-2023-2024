@@ -21,6 +21,11 @@ class TodoController extends AbstractController
         $order = $request->query->get('order') ?? 'ASC';
 
         return $this->render('todo/index.html.twig', [
+            'todos' => $todoRepository->findFullTodo(),
+            'order' => $order == 'ASC'?'DESC':'ASC'
+        ]);
+
+        return $this->render('todo/index.html.twig', [
             'todos' => $todoRepository->findBy([], [$orderby => $order]),
             'order' => $order == 'ASC'?'DESC':'ASC'
         ]);

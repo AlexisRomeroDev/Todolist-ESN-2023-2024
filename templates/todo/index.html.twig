@@ -5,11 +5,14 @@
 {% block body %}
     <h1>Todo index</h1>
 
+    {{ dump() }}
+
     <table class="table">
         <thead>
             <tr>
                 <th><a href="{{ path('app_todo_index')}}?orderby=id&order={{ order }}">Id</a></th>
                 <th><a href="{{ path('app_todo_index')}}?orderby=name&order={{ order }}">Name</a></th>
+                <th>Catégorie</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -18,6 +21,13 @@
             <tr>
                 <td>{{ todo.id }}</td>
                 <td>{{ todo.name }}</td>
+                <td>
+
+                    {% if todo.category is not null %}
+                        {{ todo.category.name }}
+                    {% endif %}
+
+                </td>
                 <td>
                     <a href="{{ path('app_todo_show', {'id': todo.id}) }}">show</a>
                     <a href="{{ path('app_todo_edit', {'id': todo.id}) }}">edit</a>

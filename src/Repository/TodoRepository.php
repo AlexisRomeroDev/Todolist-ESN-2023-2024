@@ -39,6 +39,18 @@ class TodoRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @return Todo[] Returns an array of Todo objects
+     */
+    public function findFullTodo(): array
+    {
+        return $this->createQueryBuilder('t')
+            ->leftJoin('t.category', 'category')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 //    /**
 //     * @return Todo[] Returns an array of Todo objects
 //     */
