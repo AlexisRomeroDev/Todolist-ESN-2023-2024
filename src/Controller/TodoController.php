@@ -18,37 +18,23 @@ class TodoController extends AbstractController
     public function index(TodoRepository $todoRepository, Request $request): Response
     {
 
-        $orderby = $request->query->get('orderby') ?? 'id';
-        $order = $request->query->get('order') ?? 'ASC';
-
-        $filterForm = $this->createForm(TodoIsDoneFilterType::class);
+        $filterForm = $this->createForm(TodoIsDoneFilterType::class, null, [ 'method' => 'GET']);
         $filterForm->handleRequest($request);
 
-        if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+        $orderby = $request->query->get('orderby') ?? 'id';
+        $order = $request->query->get('order') ?? 'ASC';
+        $searchTerms = $filterForm->get('searchTerms')->getData() ?? $request->query->get('searchTerms') ?? null ;
+        $stillTodo = $filterForm->get('stillTodo')->getData() ?? $request->query->get('stillTodo') ?? null;
+        $criteria =  ($stillTodo === true) ? ['done' => false] : [];
 
-            $criteria = [];
-
-            $stillTodo = $filterForm->get('stillTodo')->getData();
-            if ($stillTodo === true) {
-                $criteria = [
-                    'done' => false,
-                ];
-            }
-
-            $searchTerms = $filterForm->get('searchTerms')->getData();
-
-            $todos = $todoRepository->search($searchTerms, $criteria);
-
-        }else{
-
-            $todos =  $todoRepository->findFullTodo($orderby, $order);
-
-        }
+        $todos = $todoRepository->search($searchTerms, $criteria, $orderby, $order);
 
         return $this->render('todo/index.html.twig', [
             'todos' => $todos,
             'order' => $order == 'ASC'?'DESC':'ASC',
-            'filterForm' => $filterForm
+            'searchTerms' => $searchTerms,
+            'filterForm' => $filterForm,
+            'stillTodo' => $stillTodo
         ]);
     }
 

@@ -52,10 +52,11 @@ class TodoRepository extends ServiceEntityRepository
     }
 
 
-    public function search($searchTerms, $criteria = null):array
+    public function search($searchTerms, $criteria = null, $orderby = 'id', $order = 'ASC'):array
     {
         $querybuilder = $this->createQueryBuilder('t')
-            ->leftJoin('t.category', 'category');
+            ->leftJoin('t.category', 'category')
+            ->orderBy('t.'.$orderby, $order);
 
         if($searchTerms){
             $querybuilder

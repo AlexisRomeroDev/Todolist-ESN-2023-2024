@@ -25,8 +25,8 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th><a href="{{ path('app_todo_index')}}?orderby=id&order={{ order }}">Id</a></th>
-                    <th><a href="{{ path('app_todo_index')}}?orderby=name&order={{ order }}">Name</a></th>
+                    <th><a href="{{ path('app_todo_index')}}?orderby=id&order={{ order }}&searchTerms={{ searchTerms }}&stillTodo={{ stillTodo }}">Id</a></th>
+                    <th><a href="{{ path('app_todo_index')}}?orderby=name&order={{ order }}&searchTerms={{ searchTerms }}&stillTodo={{ stillTodo }}">Name</a></th>
                     <th>Fait</th>
                     <th>Catégorie</th>
                     <th>actions</th>
