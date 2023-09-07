@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Priority;
 use App\Entity\Todo;
 use Faker\Factory;
 use Faker\Generator;
@@ -19,13 +20,27 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
+        $priorities = [
+            'Critical', 'High', 'Medium', 'Low',
+        ];
+
+        foreach ($priorities as $key => $value) {
+            $priority = new Priority();
+            $priority->setLevel($key +1)
+                ->setName($value);
+            $manager->persist($priority);
+            $this->addReference('Priority_' . $key, $priority);
+        }
+
 
         for ($i = 1; $i <= 50; $i++) {
-            $article = new Todo();
-            $article->setName($this->faker->sentence(4))
+            $rand = rand(0,3);
+            $todo = new Todo();
+            $todo->setName($this->faker->sentence(4))
                 ->setDescription($this->faker->paragraph)
-                ->setDone(rand(0, 1) > 0.5);
-            $manager->persist($article);
+                ->setDone(rand(0, 1) > 0.5)
+                ->setPriority($this->getReference('Priority_'.$rand));
+             $manager->persist($todo);
         }
         $manager->flush();
     }

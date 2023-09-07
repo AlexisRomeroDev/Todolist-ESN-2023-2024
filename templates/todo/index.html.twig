@@ -29,6 +29,7 @@
                     <th><a href="{{ path('app_todo_index')}}?orderby=name&order={{ order }}&searchTerms={{ searchTerms }}&stillTodo={{ stillTodo }}">Name</a></th>
                     <th>Fait</th>
                     <th>Catégorie</th>
+                    <th>Priorité</th>
                     <th>actions</th>
                 </tr>
             </thead>
@@ -39,11 +40,14 @@
                     <td>{{ todo.name }}</td>
                     <td>{{ todo.isDone ? 'Yes' : 'No' }}</td>
                     <td>
-
                         {% if todo.category is not null %}
                             {{ todo.category.name }}
                         {% endif %}
-
+                    </td>
+                    <td>
+                        {% if todo.priority is not null %}
+                            {{ todo.priority.name }}
+                        {% endif %}
                     </td>
                     <td>
                         <a href="{{ path('app_todo_show', {'id': todo.id}) }}">show</a>
