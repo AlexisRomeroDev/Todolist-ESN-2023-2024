@@ -31,7 +31,7 @@ class TodoController extends AbstractController
 
         return $this->render('todo/index.html.twig', [
             'todos' => $todos,
-            'order' => $order == 'ASC'?'DESC':'ASC',
+            'order' => $order == 'ASC' ? 'DESC' : 'ASC',
             'searchTerms' => $searchTerms,
             'filterForm' => $filterForm,
             'stillTodo' => $stillTodo
