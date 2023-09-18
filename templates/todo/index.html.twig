@@ -6,6 +6,8 @@
     <div class="container todo_index">
         <h1>Liste des taches</h1>
 
+        <div id="root"></div>
+
         {{ form_start(filterForm, {'attr': {'class': 'todo_is_done_filter'}} ) }}
 
            <div class="form-group"> {{ form_row(filterForm.searchTerms) }}</div>
@@ -65,3 +67,8 @@
         <a href="{{ path('app_todo_new') }}">Create new</a>
     </div>
 {% endblock %}
+
+ {% block javascripts %}
+     parent()
+     {{ encore_entry_script_tags('react') }}
+ {% endblock %}
