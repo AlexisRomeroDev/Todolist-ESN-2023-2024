@@ -29,6 +29,9 @@ class Todo
     #[ORM\ManyToOne(inversedBy: 'todos')]
     private ?Priority $priority = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $PdfFilename = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,6 +93,18 @@ class Todo
     public function setPriority(?Priority $priority): self
     {
         $this->priority = $priority;
+
+        return $this;
+    }
+
+    public function getPdfFilename(): ?string
+    {
+        return $this->PdfFilename;
+    }
+
+    public function setPdfFilename(?string $PdfFilename): self
+    {
+        $this->PdfFilename = $PdfFilename;
 
         return $this;
     }

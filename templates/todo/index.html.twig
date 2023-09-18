@@ -69,6 +69,6 @@
 {% endblock %}
 
  {% block javascripts %}
-     parent()
+     {{ parent() }}
      {{ encore_entry_script_tags('react') }}
  {% endblock %}

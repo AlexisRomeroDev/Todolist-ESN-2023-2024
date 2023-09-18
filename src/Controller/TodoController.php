@@ -6,10 +6,17 @@ use App\Entity\Todo;
 use App\Form\TodoIsDoneFilterType;
 use App\Form\TodoType;
 use App\Repository\TodoRepository;
+use App\Service\PdfUploader;
+use PHPUnit\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/todo')]
 class TodoController extends AbstractController
@@ -39,21 +46,30 @@ class TodoController extends AbstractController
     }
 
     #[Route('/new', name: 'app_todo_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, TodoRepository $todoRepository): Response
+    public function new(Request $request, TodoRepository $todoRepository, SluggerInterface $slugger, PdfUploader $uploader): Response
     {
         $todo = new Todo();
         $form = $this->createForm(TodoType::class, $todo);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            /** @var UploadedFile $pdfFile */
+            $pdfFile = $form->get('pdfFile')->getData();
+
+            if ($pdfFile) {
+                $newFilename = $uploader->upload($pdfFile);
+                $todo->setPdfFilename($newFilename);
+            }
+
             $todoRepository->save($todo, true);
 
             return $this->redirectToRoute('app_todo_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('todo/new.html.twig', [
+        return $this->render('todo/new.html.twig', [
             'todo' => $todo,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -66,27 +82,63 @@ class TodoController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_todo_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Todo $todo, TodoRepository $todoRepository): Response
+    public function edit(
+        Request $request,
+        Todo $todo,
+        TodoRepository $todoRepository,
+        SluggerInterface $slugger,
+        PdfUploader $uploader,
+        Filesystem $filesystem
+    ): Response
     {
         $form = $this->createForm(TodoType::class, $todo);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            /** @var UploadedFile $pdfFile */
+            $pdfFile = $form->get('pdfFile')->getData();
+
+            if ($pdfFile) {
+                $oldFileName = $todo->getPdfFilename();
+                $newFilename = $uploader->upload($pdfFile);
+                $todo->setPdfFilename($newFilename);
+                if($oldFileName){
+                    try{
+                        $directory = $this->getParameter('pdf_directory');
+                        $filesystem->remove($directory."/".$oldFileName);
+                    }catch(Exception $e){
+                        // ...
+                    }
+                }
+            }
+
             $todoRepository->save($todo, true);
 
             return $this->redirectToRoute('app_todo_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('todo/edit.html.twig', [
+        return $this->render('todo/edit.html.twig', [
             'todo' => $todo,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
     #[Route('/{id}', name: 'app_todo_delete', methods: ['POST'])]
-    public function delete(Request $request, Todo $todo, TodoRepository $todoRepository): Response
+    public function delete(Request $request, Todo $todo, TodoRepository $todoRepository, Filesystem $filesystem): Response
     {
         if ($this->isCsrfTokenValid('delete'.$todo->getId(), $request->request->get('_token'))) {
+
+            $oldFileName = $todo->getPdfFilename();
+            if($oldFileName){
+                try{
+                    $directory = $this->getParameter('pdf_directory');
+                    $filesystem->remove($directory."/".$oldFileName);
+                }catch(Exception $e){
+                    // ...
+                }
+            }
+
             $todoRepository->remove($todo, true);
         }
 

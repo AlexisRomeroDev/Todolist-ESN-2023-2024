@@ -31,6 +31,12 @@
                             {{ todo.priority.name }}
                         {% endif %}</td>
                 </tr>
+                <tr>
+                    <th>Fichier</th>
+                    <td> {% if todo.pdfFilename is not null %}
+                            <a href="{{ asset('uploads/pdfFiles/' ~ todo.pdfFilename) }}">Fichier (PDF)</a>
+                        {% endif %}</td>
+                </tr>
 
             </tbody>
         </table>
