@@ -24,7 +24,7 @@ class PdfUploader
                 $newFilename
             );
         } catch (FileException $e) {
-            die($e->getMessage());
+            // die($e->getMessage());
             // ... handle exception if something happens during file upload
         }
 

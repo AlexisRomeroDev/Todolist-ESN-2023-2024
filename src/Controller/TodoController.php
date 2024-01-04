@@ -46,7 +46,7 @@ class TodoController extends AbstractController
     }
 
     #[Route('/new', name: 'app_todo_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, TodoRepository $todoRepository, SluggerInterface $slugger, PdfUploader $uploader): Response
+    public function new(Request $request, TodoRepository $todoRepository, PdfUploader $uploader): Response
     {
         $todo = new Todo();
         $form = $this->createForm(TodoType::class, $todo);
