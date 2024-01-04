@@ -14,9 +14,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class ContactController extends AbstractController
 {
     /**
-     * @param Request $request
-     * @param MailerInterface $mailer
-     * @return Response
      * @throws TransportExceptionInterface
      */
     #[Route('/contact', name: 'app_contact')]
@@ -26,11 +23,10 @@ class ContactController extends AbstractController
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()) {
-
+        if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-            $content = $data['name'] . ' a envoyé le message : ' . $data['message'];
+            $content = $data['name'].' a envoyé le message : '.$data['message'];
 
             $email = (new Email())
             ->from('noreply@mysite.com')

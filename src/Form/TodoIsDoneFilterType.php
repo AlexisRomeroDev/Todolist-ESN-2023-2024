@@ -13,18 +13,18 @@ class TodoIsDoneFilterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('stillTodo', CheckboxType::class,[
+            ->add('stillTodo', CheckboxType::class, [
                 'label' => 'Afficher uniquement les tâches qui restent à faire',
                 'mapped' => false,
                 'required' => false,
             ])
             ->add('searchTerms', null, [
-                'mapped'=> false,
+                'mapped' => false,
                 'label' => false,
                 'attr' => [
                     'class' => 'form-control',
-                    'placeholder' => "Rechercher ...",
-                ]
+                    'placeholder' => 'Rechercher ...',
+                ],
             ])
         ;
     }

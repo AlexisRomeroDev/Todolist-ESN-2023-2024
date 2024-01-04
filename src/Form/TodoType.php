@@ -26,7 +26,7 @@ class TodoType extends AbstractType
                 'required' => false,
             ])
             ->add('done', null, [
-                'label' => 'Fait'
+                'label' => 'Fait',
             ])
             ->add('priority', EntityType::class, [
                 'class' => Priority::class,
@@ -52,8 +52,8 @@ class TodoType extends AbstractType
                             'application/x-pdf',
                         ],
                         'mimeTypesMessage' => 'Please upload a valid PDF document',
-                    ])
-                ]
+                    ]),
+                ],
             ])
         ;
     }

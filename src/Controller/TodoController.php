@@ -10,13 +10,10 @@ use App\Service\PdfUploader;
 use PHPUnit\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/todo')]
 class TodoController extends AbstractController
@@ -24,24 +21,23 @@ class TodoController extends AbstractController
     #[Route('/', name: 'app_todo_index', methods: ['GET', 'POST'])]
     public function index(TodoRepository $todoRepository, Request $request): Response
     {
-
-        $filterForm = $this->createForm(TodoIsDoneFilterType::class, null, [ 'method' => 'GET']);
+        $filterForm = $this->createForm(TodoIsDoneFilterType::class, null, ['method' => 'GET']);
         $filterForm->handleRequest($request);
 
         $orderby = $request->query->get('orderby') ?? 'id';
         $order = $request->query->get('order') ?? 'ASC';
-        $searchTerms = $filterForm->get('searchTerms')->getData() ?? $request->query->get('searchTerms') ?? null ;
+        $searchTerms = $filterForm->get('searchTerms')->getData() ?? $request->query->get('searchTerms') ?? null;
         $stillTodo = $filterForm->get('stillTodo')->getData() ?? $request->query->get('stillTodo') ?? null;
-        $criteria =  ($stillTodo === true) ? ['done' => false] : [];
+        $criteria = (true === $stillTodo) ? ['done' => false] : [];
 
         $todos = $todoRepository->search($searchTerms, $criteria, $orderby, $order);
 
         return $this->render('todo/index.html.twig', [
             'todos' => $todos,
-            'order' => $order == 'ASC' ? 'DESC' : 'ASC',
+            'order' => 'ASC' == $order ? 'DESC' : 'ASC',
             'searchTerms' => $searchTerms,
             'filterForm' => $filterForm,
-            'stillTodo' => $stillTodo
+            'stillTodo' => $stillTodo,
         ]);
     }
 
@@ -53,7 +49,6 @@ class TodoController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             /** @var UploadedFile $pdfFile */
             $pdfFile = $form->get('pdfFile')->getData();
 
@@ -88,13 +83,11 @@ class TodoController extends AbstractController
         TodoRepository $todoRepository,
         PdfUploader $uploader,
         Filesystem $filesystem
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(TodoType::class, $todo);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             /** @var UploadedFile $pdfFile */
             $pdfFile = $form->get('pdfFile')->getData();
 
@@ -102,11 +95,11 @@ class TodoController extends AbstractController
                 $oldFileName = $todo->getPdfFilename();
                 $newFilename = $uploader->upload($pdfFile);
                 $todo->setPdfFilename($newFilename);
-                if($oldFileName){
-                    try{
+                if ($oldFileName) {
+                    try {
                         $directory = $this->getParameter('pdf_directory');
-                        $filesystem->remove($directory."/".$oldFileName);
-                    }catch(Exception $e){
+                        $filesystem->remove($directory.'/'.$oldFileName);
+                    } catch (Exception $e) {
                         // ...
                     }
                 }
@@ -127,13 +120,12 @@ class TodoController extends AbstractController
     public function delete(Request $request, Todo $todo, TodoRepository $todoRepository, Filesystem $filesystem): Response
     {
         if ($this->isCsrfTokenValid('delete'.$todo->getId(), $request->request->get('_token'))) {
-
             $oldFileName = $todo->getPdfFilename();
-            if($oldFileName){
-                try{
+            if ($oldFileName) {
+                try {
                     $directory = $this->getParameter('pdf_directory');
-                    $filesystem->remove($directory."/".$oldFileName);
-                }catch(Exception $e){
+                    $filesystem->remove($directory.'/'.$oldFileName);
+                } catch (Exception $e) {
                     // ...
                 }
             }

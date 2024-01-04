@@ -2,14 +2,13 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Category;
 use App\Entity\Priority;
 use App\Entity\Todo;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Faker\Generator;
-use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Persistence\ObjectManager;
 
 class AppFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -28,23 +27,22 @@ class AppFixtures extends Fixture implements DependentFixtureInterface
 
         foreach ($priorities as $key => $value) {
             $priority = new Priority();
-            $priority->setLevel($key +1)
+            $priority->setLevel($key + 1)
                 ->setName($value);
             $manager->persist($priority);
-            $this->addReference('Priority_' . $key, $priority);
+            $this->addReference('Priority_'.$key, $priority);
         }
 
-
-        for ($i = 1; $i <= 50; $i++) {
-            $rand_p = rand(0,3);
-            $rand_c = rand(0,9);
+        for ($i = 1; $i <= 50; ++$i) {
+            $rand_p = rand(0, 3);
+            $rand_c = rand(0, 9);
             $todo = new Todo();
             $todo->setName($this->faker->sentence(4))
                 ->setDescription($this->faker->paragraph)
                 ->setDone(rand(0, 1) > 0.5)
                 ->setPriority($this->getReference('Priority_'.$rand_p))
                 ->setCategory($this->getReference('Category_'.$rand_c));
-             $manager->persist($todo);
+            $manager->persist($todo);
         }
         $manager->flush();
     }

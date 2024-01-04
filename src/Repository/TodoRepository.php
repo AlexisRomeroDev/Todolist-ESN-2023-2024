@@ -51,20 +51,19 @@ class TodoRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-
-    public function search($searchTerms, $criteria = null, $orderby = 'id', $order = 'ASC'):array
+    public function search($searchTerms, $criteria = null, $orderby = 'id', $order = 'ASC'): array
     {
         $querybuilder = $this->createQueryBuilder('t')
             ->leftJoin('t.category', 'category')
             ->orderBy('t.'.$orderby, $order);
 
-        if($searchTerms){
+        if ($searchTerms) {
             $querybuilder
                 ->where('t.name LIKE :val')
-                ->setParameter('val',  '%'.$searchTerms.'%') ;
+                ->setParameter('val', '%'.$searchTerms.'%');
         }
 
-        if($criteria){
+        if ($criteria) {
             $querybuilder
                 ->andWhere('t.done = :isDone')
                 ->setParameter('isDone', $criteria['done']);
@@ -75,28 +74,28 @@ class TodoRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-//    /**
-//     * @return Todo[] Returns an array of Todo objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    //    /**
+    //     * @return Todo[] Returns an array of Todo objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('t')
+    //            ->andWhere('t.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('t.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
 
-//    public function findOneBySomeField($value): ?Todo
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    //    public function findOneBySomeField($value): ?Todo
+    //    {
+    //        return $this->createQueryBuilder('t')
+    //            ->andWhere('t.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }

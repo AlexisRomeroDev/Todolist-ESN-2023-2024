@@ -10,10 +10,11 @@ class PdfUploader
     public function __construct(
         private string $targetDirectory,
         private SluggerInterface $slugger,
-    ){
+    ) {
     }
 
-    public function upload($pdfFile){
+    public function upload($pdfFile)
+    {
         $originalFilename = pathinfo($pdfFile->getClientOriginalName(), PATHINFO_FILENAME);
         $safeFilename = $this->slugger->slug($originalFilename);
         $newFilename = $safeFilename.'-'.uniqid().'.'.$pdfFile->guessExtension();
@@ -30,5 +31,4 @@ class PdfUploader
 
         return $newFilename;
     }
-
 }
