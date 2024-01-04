@@ -5,4 +5,8 @@ body {
   .container.todo_index h1 {margin-top: 2em}
   .container.todo_index .todo_is_done_filter > div.form-group {margin-top:2em}
   .container.todo_index > table {margin-top:2em}
+  
+  & button{
+    margin: 1em;
+  }
 }
