@@ -13,6 +13,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/category')]
 class CategoryController extends AbstractController
 {
+    /**
+     * @param CategoryRepository $categoryRepository
+     * @return Response
+     */
     #[Route('/', name: 'app_category_index', methods: ['GET'])]
     public function index(CategoryRepository $categoryRepository): Response
     {
@@ -34,7 +38,7 @@ class CategoryController extends AbstractController
             return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('category/new.html.twig', [
+        return $this->render('category/new.html.twig', [
             'category' => $category,
             'form' => $form,
         ]);

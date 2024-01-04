@@ -2,6 +2,10 @@
 import ReactDOM from 'react-dom/client'
 import React from 'react'
 
+/**
+ * @returns {JSX.Element}
+ * @constructor
+ */
 function MyApp() {
   return <p>React is working</p>
 }

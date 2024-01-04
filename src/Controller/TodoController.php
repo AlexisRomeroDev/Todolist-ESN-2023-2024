@@ -86,7 +86,6 @@ class TodoController extends AbstractController
         Request $request,
         Todo $todo,
         TodoRepository $todoRepository,
-        SluggerInterface $slugger,
         PdfUploader $uploader,
         Filesystem $filesystem
     ): Response
