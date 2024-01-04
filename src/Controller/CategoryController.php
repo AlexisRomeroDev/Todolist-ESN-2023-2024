@@ -25,6 +25,11 @@ class CategoryController extends AbstractController
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param CategoryRepository $categoryRepository
+     * @return Response
+     */
     #[Route('/new', name: 'app_category_new', methods: ['GET', 'POST'])]
     public function new(Request $request, CategoryRepository $categoryRepository): Response
     {
@@ -40,10 +45,14 @@ class CategoryController extends AbstractController
 
         return $this->render('category/new.html.twig', [
             'category' => $category,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
+    /**
+     * @param Category $category
+     * @return Response
+     */
     #[Route('/{id}', name: 'app_category_show', methods: ['GET'])]
     public function show(Category $category): Response
     {
@@ -52,6 +61,12 @@ class CategoryController extends AbstractController
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param Category $category
+     * @param CategoryRepository $categoryRepository
+     * @return Response
+     */
     #[Route('/{id}/edit', name: 'app_category_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Category $category, CategoryRepository $categoryRepository): Response
     {
@@ -64,12 +79,18 @@ class CategoryController extends AbstractController
             return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('category/edit.html.twig', [
+        return $this->render('category/edit.html.twig', [
             'category' => $category,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param Category $category
+     * @param CategoryRepository $categoryRepository
+     * @return Response
+     */
     #[Route('/{id}', name: 'app_category_delete', methods: ['POST'])]
     public function delete(Request $request, Category $category, CategoryRepository $categoryRepository): Response
     {
